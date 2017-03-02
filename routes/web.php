@@ -16,4 +16,6 @@ Route::get('/', function () {
 });
 
 Route::get('/test','TestController@index');
+Route::get('/knn','KNNController@index');
+Route::get('/linear','LinearRegressionController@index');
 
