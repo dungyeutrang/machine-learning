@@ -9,10 +9,10 @@ class LinearRegressionController extends Controller
 
     public function index()
     {
-        $input = [[1, 3], [1, 4], [2, 4], [3, 1], [4, 1], [4, 2]];
-        $output = [5, 6, 7, 5, 6, 7];
+        $input = [[1,1],[2,1],[2,3],[4,5],[3,4],[5,2],[1,3]];
+        $output = [5,7,11,19,15,15,9];
         $linear = new LinearRegression($input, $output);
         $linear->train();
-//        $linear->predict([1,2]);
+        $linear->predict(array([1,2]));
     }
 }
