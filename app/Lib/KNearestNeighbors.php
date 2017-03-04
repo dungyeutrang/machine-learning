@@ -18,6 +18,12 @@ class KNearestNeighbors
         $this->k = $k;
     }
 
+    /**
+     * predict result
+     *
+     * @param $example
+     * @return mixed
+     */
     function predict($example)
     {
         $listDistance = array();
@@ -40,6 +46,13 @@ class KNearestNeighbors
         return key($listLabel);
     }
 
+    /**
+     * caculate distance 2 vector
+     *
+     * @param $v1
+     * @param $v2
+     * @return float
+     */
     public function distance($v1, $v2)
     {
         $distance = 0;

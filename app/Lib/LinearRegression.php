@@ -3,6 +3,9 @@
 
 namespace App\Lib;
 
+/**
+ * @author dungpv <dungpv@rikkeisoft.com>
+ */
 class LinearRegression
 {
     public $input;
