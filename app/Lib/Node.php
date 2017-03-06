@@ -13,16 +13,14 @@ namespace App\Lib;
  */
 class Node
 {
-    public $type;
-    public $label;
-    public $parent;
     public $value;
+    public $child;
+    public $path;
 
-    public function __construct($type, $label, $parent, $value)
+    public function __construct($path, $value)
     {
-        $this->type = $type;
-        $this->label = $label;
-        $this->parent = $parent;
         $this->value = $value;
+        $this->path = $path;
+        $this->child = array();
     }
 }
