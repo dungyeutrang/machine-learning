@@ -2,25 +2,30 @@
 /**
  * Created by PhpStorm.
  * User: dungict
- * Date: 04/03/2017
- * Time: 11:41
+ * Date: 10/03/2017
+ * Time: 09:07
  */
 
 namespace App\Lib;
 
-/**
- * @author dungpv <dungpv@rikkeisoft.com>
- */
+
 class Node
 {
+    public $label;
     public $value;
-    public $child;
-    public $path;
+    public $parentLabel;
+    public $parentValue;
+    public $leftChild;
+    public $rightSib;
+    public $parent;
 
-    public function __construct($path, $value)
+    public function __construct($label, $value, $parentLabel, $parentValue,$leftChild,$rightSib)
     {
+        $this->label = $label;
         $this->value = $value;
-        $this->path = $path;
-        $this->child = array();
+        $this->parentLabel = $parentLabel;
+        $this->parentValue = $parentValue;
+        $this->leftChild = $leftChild;
+        $this->rightSib = $rightSib;
     }
 }

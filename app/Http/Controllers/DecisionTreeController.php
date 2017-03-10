@@ -16,9 +16,10 @@ class DecisionTreeController extends Controller
         }
         fclose($f);
         $decision = new DecisionTree($data);
-        $decision->buildTree();
+//        $decision->buildTree();
+        dd($decision->buildTree());
         $examples = array('Rain','Cool','Normal','Strong');
 
-        dd($decision->predict($examples));
+//        dd($decision->predict($examples));
     }
 }

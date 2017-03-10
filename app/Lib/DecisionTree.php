@@ -1,123 +1,104 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: dungict
+ * Date: 10/03/2017
+ * Time: 09:06
+ */
 
 namespace App\Lib;
 
-/**
- * @author dungpv <dungpv@rikkeisoft.com>
- */
+
 class DecisionTree
 {
-    public $data;
-    public $tree;
-    const PARENT_ROOT_VALUE = -1;
-    public $numberFields = 0;
+    public $targets = array();
+    public $numberAttribute = 0;
+    public $data = array();
+    public $root = null;
+    const ROOT_VALUE = -1;
+    const ROOT_LABEL = -1;
 
     public function __construct($data)
     {
         $this->data = $data;
-        $this->numberFields = count($data[0]) - 1;
+        $this->numberAttribute = count($data[0]) - 1;
     }
 
-    /**
-     * build tree
-     */
     public function buildTree()
     {
-        $this->addNode(array(), self::PARENT_ROOT_VALUE);
-        for ($i = 0; $i <= $this->numberFields; $i++) {
+        $this->addNode(array(), self::ROOT_LABEL, self::ROOT_VALUE, '', '', null, null);
+        for ($i = 0; $i <= ($this->numberAttribute); $i++) {
             foreach ($this->data as $index => $dt) {
-                $this->addNode(array_slice($dt, 0, $i + 1), $dt[$i]);
+                if ($i == 0) {
+                    $this->addNode(array(self::ROOT_LABEL => SELF::ROOT_VALUE), $i, $dt[$i], self::ROOT_LABEL, SELF::ROOT_VALUE, null, null);
+                } else {
+                    $this->addNode(array_slice($dt, 0, $i), $i, $dt[$i], $i - 1, $dt[$i - 1], null, null);
+                }
+
             }
         }
-        return $this->tree;
+
+        return $this->root;
     }
 
-    /**
-     * add node
-     *
-     * @param $path
-     * @param $value
-     * @return \App\Lib\Node
-     */
-    public function addNode($path, $value)
+    public function addNode($listParent, $label, $value, $parentLabel, $parentValue, $leftChild, $rightSib)
     {
-        $node = new Node($path, $value);
-        if (!$this->tree) {
-            $this->tree = $node;
-        } else {
-            $this->addNewNode($node, $this->tree);
+        $node = new Node($label, $value, $parentLabel, $parentValue, $leftChild, $rightSib);
+        if (!$this->root) {
+            $this->root = $node;
+            return;
         }
-        return $this->tree;
+        $this->findParentAndAddNode($listParent, $node, $this->root);
     }
 
-    /**
-     * add new node
-     *
-     * @param $node
-     * @param $nodeParent
-     * @return int
-     */
-    public function addNewNode($node, $nodeParent)
+    public function findParentAndAddNode($listParent, $node, $nodeParent)
     {
-        if (!isset($node->path[1])) { // case root
-            $isExist = false;
-            $this->insertChild($nodeParent, $node);
-            return $isExist;
-        } else {
-            $listPathCurrent = $nodeParent->path;
-            array_push($listPathCurrent, $node->value);
-            if ($listPathCurrent == $node->path) {
-                $this->insertChild($nodeParent, $node);
-            }
-            foreach ($nodeParent->child as $nodeChild) {
-                $this->addNewNode($node, $nodeChild);
-            }
-        }
-    }
+        if ($nodeParent) {
+            if ($nodeParent->label == $node->parentLabel) {
+                $listLabelIdAndValue = array();
+                $nodeCurrent = $nodeParent;
+                while ($nodeCurrent) {
+                    $listLabelIdAndValue[$nodeCurrent->label] = $nodeCurrent->value;
+                    $nodeCurrent = $nodeCurrent->parent;
+                }
 
-    /**
-     * insert child
-     *
-     * @param $nodeParent
-     * @param $node
-     * @return int
-     */
-    public function insertChild($nodeParent, $node)
-    {
-        $isExist = false;
-        foreach ($nodeParent->child as $nodeChild) {
-            if ($nodeChild->value == $node->value) {
-                $isExist = true;
-            }
-        }
-        if (!$isExist) {
-            return array_push($nodeParent->child, $node);
-        }
-        return $nodeParent;
-    }
+                $isParent = false;
+                if ($nodeParent->label == self::ROOT_LABEL) {
+                    $isParent = true;
+                } else {
+                    foreach ($listParent as $index => $val) {
+                        if ($listParent[$index] != $listLabelIdAndValue[$index]) {
+                            $isParent = true;
+                        }
+                    }
+                }
 
-    public function predict($example)
-    {
-        if (!$this->tree) {
-            return 'Cannot predict';
-        } else {
-            return $this->search($this->tree, $example);
-        }
-    }
+                if ($isParent) {
+                    $node->parent = $nodeParent;
+                    if ($nodeParent->leftChild) {
 
-    public function search($node, $example)
-    {
-        if (isset($node->path[$this->numberFields])) {
-            if ($example == array_slice($node->path, 0, $this->numberFields)) {
-                return $node->value;
+                        $leftChild = $nodeParent->leftChild;
+                        if($leftChild->value == $node->value){
+                            return true;
+                        }
+                        while ($leftChild->rightSib) {
+                            $leftChild = $leftChild->rightSib;
+                            if($leftChild->value == $node->value){
+                                return true;
+                            }
+                        }
+                        $leftChild->rightSib = $node;
+                    } else {
+                        $nodeParent->leftChild = $node;
+                    }
+                    return true;
+                }
+            } else {
+                if (!$this->findParentAndAddNode($listParent, $node, $nodeParent->leftChild)) {
+                    $this->findParentAndAddNode($listParent, $node, $nodeParent->rightSib);
+                }
             }
         }
-        foreach ($node->child as $nodeChild) {
-            $result = $this->search($nodeChild, $example);
-            if ($result) {
-                return $result;
-            }
-        }
-        return null;
+
     }
 }
