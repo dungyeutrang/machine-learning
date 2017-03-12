@@ -11,7 +11,7 @@ namespace App\Lib;
 /**
  * @author dungpv <dungpv@rikkeisoft.com>
  */
-class Node
+class Node2
 {
     public $value;
     public $child;

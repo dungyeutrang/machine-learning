@@ -5,7 +5,7 @@ namespace App\Lib;
 /**
  * @author dungpv <dungpv@rikkeisoft.com>
  */
-class DecisionTree
+class DecisionTree2
 {
     const PARENT_ROOT_VALUE = -1;
     public $data;

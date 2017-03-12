@@ -17,6 +17,7 @@ class DecisionTreeController extends Controller
         fclose($f);
         $decision = new DecisionTree($data);
 //        $decision->buildTree();
+//        dd($decision->getEntropy(array(0=>'Sunny')));
         dd($decision->buildTree());
         $examples = array('Rain','Cool','Normal','Strong');
 
