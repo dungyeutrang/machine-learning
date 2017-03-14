@@ -31,6 +31,23 @@ class DecisionTree
         return $this->root;
     }
 
+    public function predict($example, $node = null)
+    {
+        if (!$node) {
+            $node = $this->root->leftChild;
+        }
+        if ($node->label == $this->numberAttribute) {
+            return $node->value;
+        }
+        if ($node->value == $example[$node->label]) {
+            return $this->predict($example, $node->leftChild);
+        } else {
+            return $this->predict($example, $node->rightSib);
+        }
+        
+    }
+
+
     public function algId3($traningSet, $listParent = array())
     {
         if (empty($traningSet)) {
